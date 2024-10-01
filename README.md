@@ -1,5 +1,8 @@
 # page 
-Description :
+THE SIMPLEST NOTE TAKING APP
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/org.cosmicide)
+
 
 Looking for a simple and efficient notes app? Look no further! With Page, taking notes has never been easier. This app is designed to provide you with a minimalistic, single-page experience where you can quickly jot down your thoughts, ideas, to-do lists, or anything else you need to remember.
 
@@ -13,6 +16,5 @@ Share your notes with friends, family, or colleagues in just a few taps. Perfect
 The intuitive design ensures a seamless experience, allowing you to focus on what matters most your notes!
 
 Whether you need to quickly jot down a shopping list, keep track of important tasks, or simply have a space to capture your ideas, Page is the perfect companion for your needs.
-eed to quickly jot down a shopping list, keep track of important tasks, or simply have a space to capture your ideas, Page is the perfect companion for your needs.
 
 [![Total downloads](https://img.shields.io/github/downloads/8izzle/page/total)](https://github.com/8izzle/page/releases)
