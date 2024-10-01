@@ -13,3 +13,6 @@ Share your notes with friends, family, or colleagues in just a few taps. Perfect
 The intuitive design ensures a seamless experience, allowing you to focus on what matters most your notes!
 
 Whether you need to quickly jot down a shopping list, keep track of important tasks, or simply have a space to capture your ideas, Page is the perfect companion for your needs.
+eed to quickly jot down a shopping list, keep track of important tasks, or simply have a space to capture your ideas, Page is the perfect companion for your needs.
+
+[![Total downloads](https://img.shields.io/github/downloads/8izzle/page/total)](https://github.com/8izzle/page/releases)
