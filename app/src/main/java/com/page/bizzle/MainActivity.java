@@ -9,42 +9,61 @@ import android.app.FragmentManager;
 import android.content.*;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.media.*;
 import android.net.*;
+import android.net.Uri;
 import android.os.*;
+import android.os.Bundle;
 import android.text.*;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.*;
 import android.util.*;
 import android.view.*;
+import android.view.View;
 import android.view.View.*;
 import android.view.animation.*;
 import android.webkit.*;
 import android.widget.*;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import java.io.*;
+import java.io.InputStream;
 import java.text.*;
 import java.util.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.*;
 import org.json.*;
+import 
+com.page.bizzle.R;
 
 public class MainActivity extends Activity {
 	
 	private Timer _timer = new Timer();
 	
+	private double s = 0;
+	
 	private LinearLayout linear1;
 	private EditText edittext1;
+	private LinearLayout box;
+	private TextView TextView1;
+	private LinearLayout LinearLayout3;
+	private LinearLayout LinearLayout4;
+	private SeekBar SeekBar1;
+	private TextView TextView2;
+	private TextView TextView3;
 	
 	private SharedPreferences bizzle;
 	private TimerTask t;
+	private Intent in = new Intent();
 	
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -57,6 +76,13 @@ public class MainActivity extends Activity {
 	private void initialize(Bundle _savedInstanceState) {
 		linear1 = findViewById(R.id.linear1);
 		edittext1 = findViewById(R.id.edittext1);
+		box = findViewById(R.id.box);
+		TextView1 = findViewById(R.id.TextView1);
+		LinearLayout3 = findViewById(R.id.LinearLayout3);
+		LinearLayout4 = findViewById(R.id.LinearLayout4);
+		SeekBar1 = findViewById(R.id.SeekBar1);
+		TextView2 = findViewById(R.id.TextView2);
+		TextView3 = findViewById(R.id.TextView3);
 		bizzle = getSharedPreferences("last", Activity.MODE_PRIVATE);
 		
 		edittext1.addTextChangedListener(new TextWatcher() {
@@ -76,43 +102,106 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		
+		SeekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar _param1, int _param2, boolean _param3) {
+				final int _progressValue = _param2;
+				TextView1.setTextSize((float)_progressValue);
+				bizzle.edit().putString("size", String.valueOf((long)(_progressValue))).commit();
+				s = _progressValue;
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar _param1) {
+				
+			}
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar _param2) {
+				
+			}
+		});
+		
+		TextView2.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View _view) {
+				box.setVisibility(View.GONE);
+				edittext1.setVisibility(View.VISIBLE);
+				bizzle.edit().putString("size", "16").commit();
+				edittext1.setTextSize((float)16);
+			}
+		});
+		
+		TextView3.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View _view) {
+				if (s == 0) {
+					
+				}
+				else {
+					edittext1.setTextSize((float)s);
+				}
+				box.setVisibility(View.GONE);
+				edittext1.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 	
 	private void initializeLogic() {
+		if (bizzle.getString("size", "").equals("")) {
+			
+		}
+		else {
+			edittext1.setTextSize((float)Double.parseDouble(bizzle.getString("size", "")));
+		}
 		if (bizzle.getString("last", "").equals("")) {
 			
 		}
 		else {
 			edittext1.setText(bizzle.getString("last", ""));
 		}
+		box.setVisibility(View.GONE);
+		box.setBackground(new GradientDrawable() { public GradientDrawable getIns(int a, int b) { this.setCornerRadius(a); this.setColor(b); return this; } }.getIns((int)20, 0xFF424242));
+		
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
-		menu.add("Share")
-		.setIcon(R.drawable.share)
-		 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add("Copy")
-		.setIcon(R.drawable.copy)
-		 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		menu.add("Font size");
+		menu.add("Copy");
+		menu.add("Share");
+		menu.add("Source code");
+		menu.add("Clear");
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item){
-		 switch (item.getTitle().toString()) {
-			case "Copy":
+		
+		switch(item.getTitle().toString()){
 			
-			((ClipboardManager) getSystemService(getApplicationContext().CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("clipboard", edittext1.getText().toString()));
 			
-			showMessage("Copied");
-			
+			case"Font size":
+			edittext1.setVisibility(View.GONE);
+			box.setVisibility(View.VISIBLE);
 			break;
-			case "Share":
-			
+			case"Copy":
+			((ClipboardManager) getSystemService(getApplicationContext().CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("clipboard", edittext1.getText().toString()));
+			break;
+			case"Share":
 			Intent i = new Intent(android.content.Intent.ACTION_SEND); i.setType("text/plain"); i.putExtra(android.content.Intent.EXTRA_TEXT, edittext1.getText().toString()); startActivity(Intent.createChooser(i,"Page"));
-			showMessage("Sharing");
-			return true;
+			break;
+			case"Source code":
+			in.setAction(Intent.ACTION_VIEW);
+			in.setData(Uri.parse("https://github.com/8izzle/page"));
+			startActivity(in);
+			break;
+			case"Clear":
+			edittext1.setText("");
+			break;
+			 
 		}
-		 return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -134,127 +223,9 @@ public class MainActivity extends Activity {
 				}
 			};
 			_timer.schedule(t, (int)(2000));
-			SketchwareUtil.showMessage(getApplicationContext(), "Press back again to exit.");
+			BizzleUtil.showMessage(getApplicationContext(), "Press back again to exit.");
 		}
 	}
-	public void _variableName() {
-	}
-	private ZoomableLinearLayout zoomLinearLayout;
-	{
-	}
-	
-	
-	public void _library() {
-	}
-	public static class ZoomableLinearLayout extends LinearLayout implements ScaleGestureDetector.OnScaleGestureListener {
-		
-		    private enum Mode {
-			        NONE,
-			        DRAG,
-			        ZOOM
-			    }
-		
-		    private static final float MIN_ZOOM = 1.0f;
-		    private static final float MAX_ZOOM = 4.0f;
-		
-		    private Mode mode = Mode.NONE;
-		    private float scale = 1.0f;
-		    private float lastScaleFactor = 0f;
-		
-		    private float startX = 0f;
-		    private float startY = 0f;
-		
-		    private float dx = 0f;
-		    private float dy = 0f;
-		    private float prevDx = 0f;
-		    private float prevDy = 0f;
-		
-		    public ZoomableLinearLayout(Context context) {
-			        super(context);
-			        init(context);
-			    }
-		
-		    public void init(Context context) {
-			        final ScaleGestureDetector scaleDetector = new ScaleGestureDetector(context, this);
-			        this.setOnTouchListener(new OnTouchListener() {
-				            @Override
-				            public boolean onTouch(View view, MotionEvent motionEvent) {
-					                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-						                    case MotionEvent.ACTION_DOWN:
-						                        if (scale > MIN_ZOOM) {
-							                            mode = Mode.DRAG;
-							                            startX = motionEvent.getX() - prevDx;
-							                            startY = motionEvent.getY() - prevDy;
-							                        }
-						                        break;
-						                    case MotionEvent.ACTION_MOVE:
-						                        if (mode == Mode.DRAG) {
-							                            dx = motionEvent.getX() - startX;
-							                            dy = motionEvent.getY() - startY;
-							                        }
-						                        break;
-						                    case MotionEvent.ACTION_POINTER_DOWN:
-						                        mode = Mode.ZOOM;
-						                        break;
-						                    case MotionEvent.ACTION_POINTER_UP:
-						                        mode = Mode.DRAG;
-						                        break;
-						                    case MotionEvent.ACTION_UP:
-						                        mode = Mode.NONE;
-						                        prevDx = dx;
-						                        prevDy = dy;
-						                        break;
-						                }
-					                scaleDetector.onTouchEvent(motionEvent);
-					
-					                if ((mode == Mode.DRAG && scale >= MIN_ZOOM) || mode == Mode.ZOOM) {
-						                    getParent().requestDisallowInterceptTouchEvent(true);
-						                    float maxDx = (child().getWidth() - (child().getWidth() / scale)) / 2 * scale;
-						                    float maxDy = (child().getHeight() - (child().getHeight() / scale)) / 2 * scale;
-						                    dx = Math.min(Math.max(dx, -maxDx), maxDx);
-						                    dy = Math.min(Math.max(dy, -maxDy), maxDy);
-						                    applyScaleAndTranslation();
-						                }
-					
-					                return true;
-					            }
-				        });
-			    }
-		
-		    @Override
-		    public boolean onScaleBegin(ScaleGestureDetector scaleDetector) {
-			        return true;
-			    }
-		
-		    @Override
-		    public boolean onScale(ScaleGestureDetector scaleDetector) {
-			        float scaleFactor = scaleDetector.getScaleFactor();
-			        if (lastScaleFactor == 0 || (Math.signum(scaleFactor) == Math.signum(lastScaleFactor))) {
-				            scale *= scaleFactor;
-				            scale = Math.max(MIN_ZOOM, Math.min(scale, MAX_ZOOM));
-				            lastScaleFactor = scaleFactor;
-				        } else {
-				            lastScaleFactor = 0;
-				        }
-			        return true;
-			    }
-		
-		    @Override
-		    public void onScaleEnd(ScaleGestureDetector scaleDetector) {
-			    }
-		
-		    private void applyScaleAndTranslation() {
-			        child().setScaleX(scale);
-			        child().setScaleY(scale);
-			        child().setTranslationX(dx);
-			        child().setTranslationY(dy);
-			    }
-		
-		    private View child() {
-			        return getChildAt(0);
-			    }
-	}
-	
 	
 	@Deprecated
 	public void showMessage(String _s) {
@@ -306,4 +277,4 @@ public class MainActivity extends Activity {
 	public int getDisplayHeightPixels() {
 		return getResources().getDisplayMetrics().heightPixels;
 	}
-}
+}
